@@ -1,0 +1,2778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Shop | Telegram Stars & Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            
+            --bg-primary: #0f0f13;
+            --bg-secondary: #1a1a24;
+            --bg-card: rgba(30, 41, 59, 0.5);
+            --bg-hover: rgba(255, 255, 255, 0.05);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --border: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.05);
+            
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.4);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Прелоадер */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .preloader-content {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .preloader-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary) 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .loading-progress {
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 2px;
+            animation: shimmer 2s infinite linear;
+        }
+
+        .version {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Основной контейнер */
+        #appContainer {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        /* Шапка */
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            background: var(--bg-hover);
+        }
+
+        .mobile-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Контент */
+        .main-content {
+            padding: 80px 20px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-section {
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Дашборд */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 20px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary) 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--primary) 50%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 16px;
+        }
+
+        .service-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .service-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            margin-top: 32px;
+        }
+
+        .quick-actions h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .actions-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .actions-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .action-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 24px;
+        }
+
+        .action-btn span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Пополнить/вывести кнопки */
+        .wallet-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .wallet-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .deposit-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #34d399 100%);
+            color: white;
+        }
+
+        .withdraw-btn {
+            background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
+            color: white;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Заголовки секций */
+        .section-header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Покупка Stars */
+        .purchase-flow {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .purchase-step {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .purchase-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .step-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 16px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .modern-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .input-hint {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .quantity-presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 480px) {
+            .quantity-presets {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .preset-btn {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .order-summary {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+        }
+
+        .price {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .total-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .step-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .nav-btn {
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .nav-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Покупка Premium */
+        .premium-plans {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 32px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (min-width: 768px) {
+            .premium-plans {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .plan-card.popular {
+            border: 2px solid var(--primary);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .plan-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .plan-features {
+            margin-bottom: 20px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .feature i {
+            color: var(--accent);
+        }
+
+        .plan-select-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plan-select-btn.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .plan-select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .premium-recipient {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .recipient-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .recipient-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recipient-option.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .premium-summary {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .summary-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .detail-item.total {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Мои заказы */
+        .orders-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .orders-list {
+            min-height: 300px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: var(--text-secondary);
+        }
+
+        /* Курсы */
+        .rates-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .rates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .rate-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .rate-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .rate-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .rate-title h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .rate-title p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .currency-rate {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .currency-rate:last-child {
+            border-bottom: none;
+        }
+
+        .converter-widget {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .converter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .converter {
+                flex-direction: column;
+            }
+            
+            .converter-swap {
+                transform: rotate(90deg);
+            }
+        }
+
+        .converter-input,
+        .converter-output {
+            flex: 1;
+        }
+
+        .converter-input input,
+        .converter-output .output-value {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .converter-swap {
+            width: 40px;
+            height: 40px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Калькулятор */
+        .calculator-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            justify-content: center;
+        }
+
+        @media (min-width: 768px) {
+            .calculator-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        .calc-tab {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .calc-tab.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .calculator-content {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .calc-section {
+            display: none;
+        }
+
+        .calc-section.active {
+            display: block;
+        }
+
+        .calc-input-group {
+            margin-bottom: 24px;
+        }
+
+        .calc-result {
+            text-align: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Поддержка */
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .support-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .support-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .support-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .support-action {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .support-action:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 19, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Кнопки */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 70px 16px 16px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 28px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+            
+            .plan-price {
+                font-size: 28px;
+            }
+            
+            .wallet-actions {
+                flex-direction: column;
+            }
+            
+            .wallet-btn {
+                max-width: 100%;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .main-content {
+                padding: 100px 40px 40px;
+            }
+            
+            .mobile-header {
+                padding: 20px 40px;
+            }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Прелоадер -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <span class="logo-text">Premium Shop</span>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="version">Premium Services</div>
+        </div>
+    </div>
+
+    <!-- Основной контейнер -->
+    <div id="appContainer">
+        <!-- Мобильный заголовок -->
+        <header class="mobile-header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="mobile-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Premium Shop</span>
+            </div>
+            <div class="mobile-user">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <!-- Основное содержимое -->
+        <main class="main-content">
+            <!-- Дашборд (Главная) -->
+            <section class="content-section active" id="dashboard">
+                <div class="dashboard-header">
+                    <h1>Добро пожаловать</h1>
+                    <p class="subtitle">Премиум магазин Telegram Stars & Premium</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">24/7</span>
+                            <span class="stat-label">Доставка</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">100%</span>
+                            <span class="stat-label">Безопасно</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">Момент</span>
+                            <span class="stat-label">Скорость</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">Лучший</span>
+                            <span class="stat-label">Курс</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallet-actions">
+                    <button class="wallet-btn deposit-btn" id="depositBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        Пополнить
+                    </button>
+                    <button class="wallet-btn withdraw-btn" id="withdrawBtn">
+                        <i class="fas fa-minus-circle"></i>
+                        Вывести
+                    </button>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-card stars-card" data-section="stars">
+                        <div class="service-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Telegram Stars</h3>
+                        <p>Покупка и отправка звезд</p>
+                        <div class="service-badge">От 0.018$ за звезду</div>
+                    </div>
+
+                    <div class="service-card premium-card" data-section="premium">
+                        <div class="service-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Telegram Premium</h3>
+                        <p>Премиум подписка</p>
+                        <div class="service-badge">От 16$</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h2>Быстрые действия</h2>
+                    <div class="actions-grid">
+                        <button class="action-btn" data-section="rates">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Курсы</span>
+                        </button>
+                        <button class="action-btn" data-section="calculator">
+                            <i class="fas fa-calculator"></i>
+                            <span>Калькулятор</span>
+                        </button>
+                        <button class="action-btn" data-section="orders">
+                            <i class="fas fa-history"></i>
+                            <span>История</span>
+                        </button>
+                        <button class="action-btn" data-section="support">
+                            <i class="fas fa-headset"></i>
+                            <span>Поддержка</span>
+                        </button>
+                        <button class="action-btn" data-section="stars">
+                            <i class="fas fa-star"></i>
+                            <span>Купить Stars</span>
+                        </button>
+                        <button class="action-btn" data-section="premium">
+                            <i class="fas fa-crown"></i>
+                            <span>Купить Premium</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Покупка Stars -->
+            <section class="content-section" id="stars">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-star"></i>
+                        Покупка Telegram Stars
+                    </h2>
+                    <p class="section-subtitle">Выберите количество и получателя</p>
+                </div>
+
+                <div class="purchase-flow">
+                    <!-- Шаг 1: Выбор получателя -->
+                    <div class="purchase-step">
+                        <div class="step-header">
+                            <span class="step-number">1</span>
+                            <h3>Получатель</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="input-group">
+                                <label>Имя пользователя</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-at"></i>
+                                    <input type="text" id="starsUsername" placeholder="@username" class="modern-input">
+                                </div>
+                                <div class="input-hint">Введите @username получателя</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 2: Количество -->
+                    <div class="purchase-step">
+                        <div class="step-header">
+                            <span class="step-number">2</span>
+                            <h3>Количество звезд</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="quantity-presets">
+                                <button class="preset-btn" data-amount="50">50 ⭐</button>
+                                <button class="preset-btn" data-amount="100">100 ⭐</button>
+                                <button class="preset-btn" data-amount="500">500 ⭐</button>
+                                <button class="preset-btn" data-amount="1000">1000 ⭐</button>
+                            </div>
+                            <div class="input-group">
+                                <label>Или введите свое число</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-hashtag"></i>
+                                    <input type="number" id="starsCustomAmount" placeholder="Любое число" class="modern-input">
+                                    <span class="input-suffix">⭐</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 3: Подтверждение -->
+                    <div class="purchase-step">
+                        <div class="step-header">
+                            <span class="step-number">3</span>
+                            <h3>Подтверждение</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="order-summary">
+                                <div class="summary-item">
+                                    <span>Получатель:</span>
+                                    <span id="summaryUsername">@username</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Количество звезд:</span>
+                                    <span id="summaryAmount">50 ⭐</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Стоимость:</span>
+                                    <span id="summaryPrice" class="price">0.90 $</span>
+                                </div>
+                                <div class="summary-divider"></div>
+                                <div class="summary-total">
+                                    <span>Итого к оплате:</span>
+                                    <span id="summaryTotal" class="total-price">0.90 $</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Навигация по шагам -->
+                    <div class="step-navigation">
+                        <button class="nav-btn secondary" id="prevStep">
+                            <i class="fas fa-arrow-left"></i>
+                            Назад
+                        </button>
+                        <div class="step-indicator">
+                            <span class="step-dot active"></span>
+                            <span class="step-dot"></span>
+                            <span class="step-dot"></span>
+                        </div>
+                        <button class="nav-btn primary" id="nextStep">
+                            Далее
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Покупка Premium -->
+            <section class="content-section" id="premium">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-crown"></i>
+                        Telegram Premium
+                    </h2>
+                    <p class="section-subtitle">Выберите срок подписки</p>
+                </div>
+
+                <div class="premium-plans">
+                    <div class="plan-card" data-plan="3">
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3>3 месяца</h3>
+                            <div class="plan-price">16 $</div>
+                        </div>
+                        <div class="plan-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Экономия 20%</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>5.33$/мес</span>
+                            </div>
+                        </div>
+                        <button class="plan-select-btn">Выбрать</button>
+                    </div>
+
+                    <div class="plan-card popular" data-plan="6">
+                        <div class="plan-badge">Популярный</div>
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3>6 месяцев</h3>
+                            <div class="plan-price">20 $</div>
+                        </div>
+                        <div class="plan-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Экономия 40%</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>3.33$/мес</span>
+                            </div>
+                        </div>
+                        <button class="plan-select-btn primary">Выбрать</button>
+                    </div>
+
+                    <div class="plan-card" data-plan="12">
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-calendar-star"></i>
+                            </div>
+                            <h3>12 месяцев</h3>
+                            <div class="plan-price">36 $</div>
+                        </div>
+                        <div class="plan-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Экономия 50%</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>3.00$/мес</span>
+                            </div>
+                        </div>
+                        <button class="plan-select-btn">Выбрать</button>
+                    </div>
+                </div>
+
+                <div class="premium-recipient">
+                    <h3>Получатель подписки</h3>
+                    <div class="recipient-options">
+                        <div class="recipient-option active" data-recipient="self">
+                            <i class="fas fa-user"></i>
+                            <span>Для себя</span>
+                        </div>
+                        <div class="recipient-option" data-recipient="other">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Для друга</span>
+                        </div>
+                    </div>
+                    <div class="input-group" id="recipientInput" style="display: none; margin-top: 16px;">
+                        <label>Username друга</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-at"></i>
+                            <input type="text" id="premiumFriendUsername" placeholder="@username" class="modern-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-summary">
+                    <div class="summary-card">
+                        <h4>Сводка заказа</h4>
+                        <div class="summary-details">
+                            <div class="detail-item">
+                                <span>План:</span>
+                                <span id="selectedPlan">Не выбран</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Получатель:</span>
+                                <span id="selectedRecipient">Вы</span>
+                            </div>
+                            <div class="detail-item total">
+                                <span>Итого:</span>
+                                <span id="premiumTotal">0 $</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn" id="buyPremiumBtn">
+                            <i class="fas fa-lock"></i>
+                            Перейти к оплате
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Мои заказы -->
+            <section class="content-section" id="orders">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-shopping-bag"></i>
+                        История заказов
+                    </h2>
+                </div>
+
+                <div class="orders-tabs">
+                    <button class="tab-btn active" data-tab="all">Все</button>
+                    <button class="tab-btn" data-tab="stars">Stars</button>
+                    <button class="tab-btn" data-tab="premium">Premium</button>
+                    <button class="tab-btn" data-tab="pending">В ожидании</button>
+                </div>
+
+                <div class="orders-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3>Заказов нет</h3>
+                        <p>Здесь появятся ваши покупки</p>
+                        <button class="btn-primary" style="margin-top: 20px;" data-section="stars">
+                            <i class="fas fa-star"></i>
+                            Купить Stars
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Курсы -->
+            <section class="content-section" id="rates">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Актуальные курсы
+                    </h2>
+                    <div class="last-update" style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                        <i class="fas fa-sync"></i>
+                        Обновлено: <span id="updateTime">сегодня 12:00</span>
+                    </div>
+                </div>
+
+                <div class="rates-grid">
+                    <div class="rate-card">
+                        <div class="rate-header">
+                            <div class="rate-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rate-title">
+                                <h3>Telegram Stars</h3>
+                                <p>Курс покупки</p>
+                            </div>
+                        </div>
+                        <div class="rate-values">
+                            <div class="currency-rate">
+                                <span class="currency">1 ⭐</span>
+                                <span class="value">1.3 ₽</span>
+                            </div>
+                            <div class="currency-rate">
+                                <span class="currency">1 ⭐</span>
+                                <span class="value">0.018 $</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rate-card">
+                        <div class="rate-header">
+                            <div class="rate-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="rate-title">
+                                <h3>USDT</h3>
+                                <p>Курс криптовалюты</p>
+                            </div>
+                        </div>
+                        <div class="rate-values">
+                            <div class="currency-rate">
+                                <span class="currency">1 USDT</span>
+                                <span class="value" id="usdtRate">76.30 ₽</span>
+                            </div>
+                            <div class="currency-rate">
+                                <span class="currency">1 USDT</span>
+                                <span class="value">1.00 $</span>
+                            </div>
+                        </div>
+                        <div class="rate-note" style="color: var(--text-secondary); font-size: 14px; margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-info-circle"></i>
+                            Курс обновляется каждые 3 часа
+                        </div>
+                    </div>
+                </div>
+
+                <div class="converter-widget">
+                    <h3>Конвертер валют</h3>
+                    <div class="converter">
+                        <div class="converter-input">
+                            <input type="number" value="100" id="convertAmount" class="modern-input">
+                            <select id="convertFrom" class="modern-input" style="margin-top: 8px;">
+                                <option value="stars">⭐ Stars</option>
+                                <option value="rub">₽ Рубли</option>
+                                <option value="usd">$ Доллары</option>
+                                <option value="usdt">USDT</option>
+                            </select>
+                        </div>
+                        <div class="converter-swap">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="converter-output">
+                            <div class="output-value" id="convertedValue" style="padding: 14px; background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); font-weight: 600; text-align: center;">130.00 ₽</div>
+                            <select id="convertTo" class="modern-input" style="margin-top: 8px;">
+                                <option value="rub">₽ Рубли</option>
+                                <option value="stars">⭐ Stars</option>
+                                <option value="usd">$ Доллары</option>
+                                <option value="usdt">USDT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Калькулятор -->
+            <section class="content-section" id="calculator">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-calculator"></i>
+                        Калькулятор
+                    </h2>
+                    <p class="section-subtitle">Рассчитайте стоимость покупки</p>
+                </div>
+
+                <div class="calculator-tabs">
+                    <button class="calc-tab active" data-calc="rub-to-stars">
+                        <i class="fas fa-ruble-sign"></i>
+                        Рубли → Stars
+                    </button>
+                    <button class="calc-tab" data-calc="stars-to-rub">
+                        <i class="fas fa-star"></i>
+                        Stars → Рубли
+                    </button>
+                    <button class="calc-tab" data-calc="usd-to-stars">
+                        <i class="fas fa-dollar-sign"></i>
+                        Доллары → Stars
+                    </button>
+                </div>
+
+                <div class="calculator-content">
+                    <!-- Рубли в Stars -->
+                    <div class="calc-section active" id="rub-to-stars">
+                        <div class="calc-input-group">
+                            <label>Сумма в рублях</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-ruble-sign"></i>
+                                <input type="number" id="rubAmount" value="1000" class="modern-input">
+                            </div>
+                        </div>
+                        <div class="calc-result">
+                            <div class="result-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="result-value">
+                                <span id="rubToStarsResult">769 ⭐</span>
+                                <span class="result-label">≈ 1000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stars в Рубли -->
+                    <div class="calc-section" id="stars-to-rub">
+                        <div class="calc-input-group">
+                            <label>Количество Stars</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-star"></i>
+                                <input type="number" id="starsCalcAmount" value="100" class="modern-input">
+                            </div>
+                        </div>
+                        <div class="calc-result">
+                            <div class="result-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="result-value">
+                                <span id="starsToRubResult">130 ₽</span>
+                                <span class="result-label">≈ 100 ⭐</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Доллары в Stars -->
+                    <div class="calc-section" id="usd-to-stars">
+                        <div class="calc-input-group">
+                            <label>Сумма в долларах</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                                <input type="number" id="usdAmount" value="10" class="modern-input">
+                            </div>
+                        </div>
+                        <div class="calc-result">
+                            <div class="result-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="result-value">
+                                <span id="usdToStarsResult">555 ⭐</span>
+                                <span class="result-label">≈ 10 $</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-presets" style="margin-top: 24px;">
+                    <h4 style="margin-bottom: 12px; color: var(--text-primary);">Быстрые суммы</h4>
+                    <div class="preset-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                        <button class="preset-amount" data-amount="500" style="padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-primary);">500 ₽</button>
+                        <button class="preset-amount" data-amount="1000" style="padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-primary);">1000 ₽</button>
+                        <button class="preset-amount" data-amount="5000" style="padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-primary);">5000 ₽</button>
+                        <button class="preset-amount" data-amount="10000" style="padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-primary);">10000 ₽</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Поддержка -->
+            <section class="content-section" id="support">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-headset"></i>
+                        Поддержка
+                    </h2>
+                    <p class="section-subtitle">Мы всегда готовы помочь</p>
+                </div>
+
+                <div class="support-grid">
+                    <div class="support-card">
+                        <div class="support-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Чат поддержки</h3>
+                        <p>Оперативная помощь в Telegram</p>
+                        <button class="support-action" id="openSupportChat">
+                            <i class="fas fa-paper-plane"></i>
+                            Написать
+                        </button>
+                    </div>
+
+                    <div class="support-card">
+                        <div class="support-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>FAQ</h3>
+                        <p>Частые вопросы и ответы</p>
+                        <button class="support-action" id="openFaq">
+                            <i class="fas fa-book-open"></i>
+                            Открыть
+                        </button>
+                    </div>
+
+                    <div class="support-card">
+                        <div class="support-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Почта</h3>
+                        <p>Поддержка по email</p>
+                        <button class="support-action" id="openEmail">
+                            <i class="fas fa-envelope-open"></i>
+                            Написать
+                        </button>
+                    </div>
+                </div>
+
+                <div class="support-form" style="background: linear-gradient(135deg, var(--bg-card) 0%, rgba(15, 23, 42, 0.5) 100%); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 24px; margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; color: var(--text-primary);">Форма обращения</h3>
+                    <div class="form-group">
+                        <label>Тема обращения</label>
+                        <select class="modern-input" id="supportTopic">
+                            <option value="payment">Проблемы с оплатой</option>
+                            <option value="delivery">Задержка доставки</option>
+                            <option value="account">Аккаунт и безопасность</option>
+                            <option value="other">Другое</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ваше сообщение</label>
+                        <textarea class="modern-input" id="supportMessage" rows="4" placeholder="Опишите вашу проблему подробно..."></textarea>
+                    </div>
+                    <button class="btn-primary" id="submitSupport" style="width: 100%; margin-top: 20px;">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить обращение
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальное окно пополнения звезд -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-star"></i>
+                    Пополнить Stars
+                </h3>
+                <button class="modal-close" data-modal="depositModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deposit-amount">
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Выберите количество звезд</h4>
+                    <div class="amount-presets" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 16px 0;">
+                        <button class="preset-btn" data-amount="100">100 ⭐</button>
+                        <button class="preset-btn" data-amount="500">500 ⭐</button>
+                        <button class="preset-btn" data-amount="1000">1000 ⭐</button>
+                        <button class="preset-btn" data-amount="5000">5000 ⭐</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Или введите свое количество</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="number" id="depositStarsAmount" placeholder="Количество звезд" class="modern-input">
+                            <span class="input-suffix">⭐</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Стоимость -->
+                    <div class="cost-calculation" style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: var(--radius-md); margin-top: 16px;">
+                        <h4 style="margin-bottom: 12px; color: var(--text-primary);">Стоимость</h4>
+                        <div class="cost-item" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: var(--text-secondary);">В USDT:</span>
+                            <span id="costUSDT" style="color: var(--accent); font-weight: 600;">0.00 USDT</span>
+                        </div>
+                        <div class="cost-item" style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">В рублях:</span>
+                            <span id="costRUB" style="color: var(--accent); font-weight: 600;">0 ₽</span>
+                        </div>
+                        <div class="exchange-rate" style="color: var(--text-muted); font-size: 12px; margin-top: 8px;">
+                            Курс: 1 ⭐ = 0.018 USDT = 1.3 ₽
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="deposit-methods" style="margin-top: 24px;">
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Способ оплаты</h4>
+                    <div class="method-option" data-method="cryptobot" style="display: flex; align-items: center; padding: 16px; background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); margin-top: 12px; cursor: pointer;">
+                        <div class="method-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="method-info" style="flex: 1;">
+                            <div class="method-name" style="font-weight: 600; color: var(--text-primary);">CryptoBot (USDT)</div>
+                            <div class="method-fee" style="font-size: 14px; color: var(--text-secondary);">Без комиссии</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-secondary" data-modal="depositModal" style="flex: 1;">
+                        <i class="fas fa-arrow-left"></i>
+                        Назад
+                    </button>
+                    <button class="btn-primary" id="startStarsDeposit" style="flex: 2;">
+                        <i class="fas fa-credit-card"></i>
+                        Пополнить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно вывода звезд -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-star"></i>
+                    Вывести Stars
+                </h3>
+                <button class="modal-close" data-modal="withdrawModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="withdraw-form">
+                    <div class="input-group">
+                        <label>Ваш Telegram username</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-at"></i>
+                            <input type="text" id="withdrawUsername" placeholder="@username" class="modern-input">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Количество звезд для вывода</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="number" id="withdrawStarsAmount" placeholder="100" class="modern-input">
+                            <span class="input-suffix">⭐</span>
+                        </div>
+                    </div>
+                    
+                    <div class="withdraw-info" style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: var(--radius-md); margin-top: 16px;">
+                        <h4 style="margin-bottom: 8px; color: var(--text-primary);">Информация</h4>
+                        <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 20px;">
+                            <li>Минимальная сумма вывода: 100 ⭐</li>
+                            <li>Вывод обрабатывается в течение 5 минут</li>
+                            <li>Звезды будут отправлены на ваш Telegram аккаунт</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button class="btn-secondary" data-modal="withdrawModal" style="flex: 1;">
+                            <i class="fas fa-arrow-left"></i>
+                            Назад
+                        </button>
+                        <button class="btn-primary" id="submitStarsWithdraw" style="flex: 2;">
+                            <i class="fas fa-paper-plane"></i>
+                            Вывести
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно оплаты -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-credit-card"></i>
+                    Оплата
+                </h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-summary">
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Детали заказа</h4>
+                    <div class="summary-details" id="modalSummary" style="background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: var(--radius-md);">
+                        <!-- Детали будут заполнены JavaScript -->
+                    </div>
+                </div>
+                <div class="payment-methods" style="margin-top: 24px;">
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Выберите способ оплаты</h4>
+                    <div class="method-option" data-method="cryptobot" style="display: flex; align-items: center; padding: 16px; background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); margin-bottom: 12px; cursor: pointer;">
+                        <div class="method-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="method-info" style="flex: 1;">
+                            <div class="method-name" style="font-weight: 600; color: var(--text-primary);">CryptoBot (USDT)</div>
+                            <div class="method-fee" style="font-size: 14px; color: var(--text-secondary);">Без комиссии</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+                    <div class="method-option" data-method="card" style="display: flex; align-items: center; padding: 16px; background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); cursor: pointer;">
+                        <div class="method-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="method-info" style="flex: 1;">
+                            <div class="method-name" style="font-weight: 600; color: var(--text-primary);">Банковская карта</div>
+                            <div class="method-fee" style="font-size: 14px; color: var(--text-secondary);">Комиссия 3%</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                    document.getElementById('appContainer').style.opacity = '1';
+                    
+                    initApp();
+                }, 300);
+            }, 1500);
+
+            function initApp() {
+                // Навигация по секциям
+                document.querySelectorAll('.service-card, .action-btn, .nav-item, [data-section]').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const sectionId = this.dataset.section || this.closest('[data-section]').dataset.section;
+                        if (sectionId) {
+                            showSection(sectionId);
+                        }
+                    });
+                });
+
+                document.getElementById('menuToggle').addEventListener('click', function() {
+                    alert('Навигационное меню - используйте кнопки на странице');
+                });
+
+                // Кнопки пополнения/вывода
+                document.getElementById('depositBtn').addEventListener('click', function() {
+                    document.getElementById('depositModal').style.display = 'flex';
+                });
+
+                document.getElementById('withdrawBtn').addEventListener('click', function() {
+                    document.getElementById('withdrawModal').style.display = 'flex';
+                });
+
+                // Закрытие модальных окон
+                document.querySelectorAll('.modal-close, .btn-secondary[data-modal]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const modalId = this.dataset.modal || 'paymentModal';
+                        document.getElementById(modalId).style.display = 'none';
+                    });
+                });
+
+                // Закрытие по клику вне окна
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            this.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Пополнение звезд
+                const depositStarsAmount = document.getElementById('depositStarsAmount');
+                const costUSDT = document.getElementById('costUSDT');
+                const costRUB = document.getElementById('costRUB');
+                
+                function updateDepositCost() {
+                    const stars = parseInt(depositStarsAmount.value) || 0;
+                    const usdt = (stars * 0.018).toFixed(2);
+                    const rub = (stars * 1.3).toFixed(2);
+                    
+                    costUSDT.textContent = `${usdt} USDT`;
+                    costRUB.textContent = `${rub} ₽`;
+                }
+                
+                // Пресеты пополнения
+                document.querySelectorAll('#depositModal .preset-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const amount = this.dataset.amount;
+                        depositStarsAmount.value = amount;
+                        updateDepositCost();
+                    });
+                });
+                
+                depositStarsAmount.addEventListener('input', updateDepositCost);
+                
+                document.getElementById('startStarsDeposit').addEventListener('click', function() {
+                    const stars = parseInt(depositStarsAmount.value) || 0;
+                    if (!stars || stars < 100) {
+                        alert('Минимальная сумма пополнения: 100 ⭐');
+                        return;
+                    }
+                    
+                    const usdtAmount = (stars * 0.018).toFixed(2);
+                    
+                    // Создание инвойса для пополнения звезд
+                    createStarsDepositInvoice(stars, usdtAmount);
+                });
+
+                // Вывод звезд
+                document.getElementById('submitStarsWithdraw').addEventListener('click', function() {
+                    const username = document.getElementById('withdrawUsername').value;
+                    const stars = parseInt(document.getElementById('withdrawStarsAmount').value) || 0;
+                    
+                    if (!username || !username.startsWith('@')) {
+                        alert('Введите корректный username Telegram (начинается с @)');
+                        return;
+                    }
+                    if (!stars || stars < 100) {
+                        alert('Минимальная сумма вывода: 100 ⭐');
+                        return;
+                    }
+                    
+                    // Отправка запроса на вывод звезд
+                    submitStarsWithdrawRequest(username, stars);
+                });
+
+                initStarsPurchase();
+                initPremiumPurchase();
+                initCalculator();
+                initCurrencyConverter();
+                initSupport();
+                
+                // Инициализация стоимости пополнения
+                updateDepositCost();
+            }
+
+            function showSection(sectionId) {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    window.scrollTo(0, 0);
+                }
+            }
+
+            function initStarsPurchase() {
+                const starsUsername = document.getElementById('starsUsername');
+                const starsCustomAmount = document.getElementById('starsCustomAmount');
+                const summaryUsername = document.getElementById('summaryUsername');
+                const summaryAmount = document.getElementById('summaryAmount');
+                const summaryPrice = document.getElementById('summaryPrice');
+                const summaryTotal = document.getElementById('summaryTotal');
+                const nextStepBtn = document.getElementById('nextStep');
+                const prevStepBtn = document.getElementById('prevStep');
+                const stepDots = document.querySelectorAll('.step-dot');
+                const purchaseSteps = document.querySelectorAll('.purchase-step');
+                
+                let currentStep = 0;
+                let starsAmount = 50;
+                
+                document.querySelectorAll('.preset-btn[data-amount]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        starsAmount = parseInt(this.dataset.amount);
+                        starsCustomAmount.value = starsAmount;
+                        updateStarsSummary();
+                    });
+                });
+                
+                starsCustomAmount.addEventListener('input', function() {
+                    starsAmount = parseInt(this.value) || 0;
+                    updateStarsSummary();
+                });
+                
+                starsUsername.addEventListener('input', updateStarsSummary);
+                
+                nextStepBtn.addEventListener('click', function() {
+                    if (currentStep < 2) {
+                        currentStep++;
+                        updateSteps();
+                    } else {
+                        openPaymentModal('stars', {
+                            username: starsUsername.value || '@username',
+                            amount: starsAmount,
+                            price: (starsAmount * 0.018).toFixed(2)
+                        });
+                    }
+                });
+                
+                prevStepBtn.addEventListener('click', function() {
+                    if (currentStep > 0) {
+                        currentStep--;
+                        updateSteps();
+                    }
+                });
+                
+                function updateSteps() {
+                    purchaseSteps.forEach((step, index) => {
+                        if (index === currentStep) {
+                            step.style.opacity = '1';
+                        } else {
+                            step.style.opacity = '0.5';
+                        }
+                    });
+                    
+                    stepDots.forEach((dot, index) => {
+                        if (index === currentStep) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                    
+                    if (currentStep === 0) {
+                        prevStepBtn.style.visibility = 'hidden';
+                    } else {
+                        prevStepBtn.style.visibility = 'visible';
+                    }
+                    
+                    if (currentStep === 2) {
+                        nextStepBtn.innerHTML = 'Оплатить <i class="fas fa-credit-card"></i>';
+                    } else {
+                        nextStepBtn.innerHTML = 'Далее <i class="fas fa-arrow-right"></i>';
+                    }
+                }
+                
+                function updateStarsSummary() {
+                    const username = starsUsername.value || '@username';
+                    const price = (starsAmount * 0.018).toFixed(2);
+                    
+                    summaryUsername.textContent = username;
+                    summaryAmount.textContent = `${starsAmount} ⭐`;
+                    summaryPrice.textContent = `${price} $`;
+                    summaryTotal.textContent = `${price} $`;
+                }
+                
+                updateStarsSummary();
+                updateSteps();
+            }
+
+            function initPremiumPurchase() {
+                const planCards = document.querySelectorAll('.plan-card');
+                const recipientOptions = document.querySelectorAll('.recipient-option');
+                const recipientInput = document.getElementById('recipientInput');
+                const premiumFriendUsername = document.getElementById('premiumFriendUsername');
+                const selectedPlan = document.getElementById('selectedPlan');
+                const selectedRecipient = document.getElementById('selectedRecipient');
+                const premiumTotal = document.getElementById('premiumTotal');
+                const buyPremiumBtn = document.getElementById('buyPremiumBtn');
+                
+                let selectedPlanData = null;
+                let recipient = 'self';
+                
+                planCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const plan = this.dataset.plan;
+                        const price = this.querySelector('.plan-price').textContent;
+                        
+                        planCards.forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        selectedPlanData = {
+                            months: getPlanMonths(plan),
+                            price: parseInt(price)
+                        };
+                        
+                        updatePremiumSummary();
+                    });
+                });
+                
+                recipientOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        recipient = this.dataset.recipient;
+                        
+                        recipientOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        if (recipient === 'other') {
+                            recipientInput.style.display = 'block';
+                        } else {
+                            recipientInput.style.display = 'none';
+                        }
+                        
+                        updatePremiumSummary();
+                    });
+                });
+                
+                premiumFriendUsername.addEventListener('input', updatePremiumSummary);
+                
+                buyPremiumBtn.addEventListener('click', function() {
+                    if (!selectedPlanData) {
+                        alert('Пожалуйста, выберите план Premium');
+                        return;
+                    }
+                    
+                    const username = recipient === 'self' ? 'Ваш аккаунт' : premiumFriendUsername.value || '@friend';
+                    
+                    openPaymentModal('premium', {
+                        username: username,
+                        months: selectedPlanData.months,
+                        price: selectedPlanData.price
+                    });
+                });
+                
+                function getPlanMonths(plan) {
+                    switch(plan) {
+                        case '3': return '3 месяца';
+                        case '6': return '6 месяцев';
+                        case '12': return '12 месяцев';
+                        default: return '3 месяца';
+                    }
+                }
+                
+                function updatePremiumSummary() {
+                    if (selectedPlanData) {
+                        selectedPlan.textContent = selectedPlanData.months;
+                        premiumTotal.textContent = `${selectedPlanData.price} $`;
+                    }
+                    
+                    selectedRecipient.textContent = recipient === 'self' ? 'Вы' : premiumFriendUsername.value || 'Друг';
+                }
+            }
+
+            function initCalculator() {
+                const calcTabs = document.querySelectorAll('.calc-tab');
+                const calcSections = document.querySelectorAll('.calc-section');
+                const rubAmount = document.getElementById('rubAmount');
+                const starsCalcAmount = document.getElementById('starsCalcAmount');
+                const usdAmount = document.getElementById('usdAmount');
+                const rubToStarsResult = document.getElementById('rubToStarsResult');
+                const starsToRubResult = document.getElementById('starsToRubResult');
+                const usdToStarsResult = document.getElementById('usdToStarsResult');
+                
+                calcTabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const calcType = this.dataset.calc;
+                        
+                        calcTabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        calcSections.forEach(section => {
+                            if (section.id === calcType) {
+                                section.classList.add('active');
+                            } else {
+                                section.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+                
+                rubAmount.addEventListener('input', function() {
+                    const rub = parseInt(this.value) || 0;
+                    const stars = Math.floor(rub / 1.3);
+                    rubToStarsResult.textContent = `${stars} ⭐`;
+                });
+                
+                starsCalcAmount.addEventListener('input', function() {
+                    const stars = parseInt(this.value) || 0;
+                    const rub = (stars * 1.3).toFixed(2);
+                    starsToRubResult.textContent = `${rub} ₽`;
+                });
+                
+                usdAmount.addEventListener('input', function() {
+                    const usd = parseInt(this.value) || 0;
+                    const stars = Math.floor(usd / 0.018);
+                    usdToStarsResult.textContent = `${stars} ⭐`;
+                });
+                
+                document.querySelectorAll('.preset-amount').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const amount = this.dataset.amount;
+                        rubAmount.value = amount;
+                        rubAmount.dispatchEvent(new Event('input'));
+                    });
+                });
+                
+                rubAmount.dispatchEvent(new Event('input'));
+                starsCalcAmount.dispatchEvent(new Event('input'));
+                usdAmount.dispatchEvent(new Event('input'));
+            }
+
+            function initCurrencyConverter() {
+                const convertAmount = document.getElementById('convertAmount');
+                const convertFrom = document.getElementById('convertFrom');
+                const convertTo = document.getElementById('convertTo');
+                const convertedValue = document.getElementById('convertedValue');
+                const converterSwap = document.querySelector('.converter-swap');
+                
+                function convertCurrency() {
+                    const amount = parseFloat(convertAmount.value) || 0;
+                    const from = convertFrom.value;
+                    const to = convertTo.value;
+                    
+                    const rates = {
+                        stars: { rub: 1.3, usd: 0.018, usdt: 0.018 },
+                        rub: { stars: 1/1.3, usd: 0.018/1.3, usdt: 0.018/1.3 },
+                        usd: { stars: 1/0.018, rub: 1.3/0.018, usdt: 1 },
+                        usdt: { stars: 1/0.018, rub: 1.3/0.018, usd: 1 }
+                    };
+                    
+                    let result;
+                    
+                    if (from === to) {
+                        result = amount;
+                    } else if (rates[from] && rates[from][to]) {
+                        result = amount * rates[from][to];
+                    } else {
+                        result = 0;
+                    }
+                    
+                    let symbol = '';
+                    switch(to) {
+                        case 'rub': symbol = '₽'; break;
+                        case 'stars': symbol = '⭐'; break;
+                        case 'usd': symbol = '$'; break;
+                        case 'usdt': symbol = 'USDT'; break;
+                    }
+                    
+                    convertedValue.textContent = `${result.toFixed(2)} ${symbol}`;
+                }
+                
+                convertAmount.addEventListener('input', convertCurrency);
+                convertFrom.addEventListener('change', convertCurrency);
+                convertTo.addEventListener('change', convertCurrency);
+                
+                converterSwap.addEventListener('click', function() {
+                    const temp = convertFrom.value;
+                    convertFrom.value = convertTo.value;
+                    convertTo.value = temp;
+                    convertCurrency();
+                });
+                
+                convertCurrency();
+            }
+
+            function initSupport() {
+                document.getElementById('openSupportChat').addEventListener('click', function() {
+                    alert('Открывается чат поддержки в Telegram...');
+                });
+                
+                document.getElementById('openFaq').addEventListener('click', function() {
+                    alert('Открывается раздел FAQ...');
+                });
+                
+                document.getElementById('openEmail').addEventListener('click', function() {
+                    alert('Открывается форма email...');
+                });
+                
+                document.getElementById('submitSupport').addEventListener('click', function() {
+                    const topic = document.getElementById('supportTopic').value;
+                    const message = document.getElementById('supportMessage').value;
+                    
+                    if (!message.trim()) {
+                        alert('Пожалуйста, опишите вашу проблему');
+                        return;
+                    }
+                    
+                    alert('Ваше обращение отправлено! Мы ответим в ближайшее время.');
+                    document.getElementById('supportMessage').value = '';
+                });
+            }
+
+            function openPaymentModal(type, data) {
+                const modal = document.getElementById('paymentModal');
+                const modalSummary = document.getElementById('modalSummary');
+                
+                let summaryHTML = '';
+                
+                if (type === 'stars') {
+                    summaryHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Тип:</strong> Telegram Stars</div>
+                        <div style="margin-bottom: 8px;"><strong>Получатель:</strong> ${data.username}</div>
+                        <div style="margin-bottom: 8px;"><strong>Количество:</strong> ${data.amount} ⭐</div>
+                        <div style="margin-bottom: 8px;"><strong>Стоимость:</strong> ${data.price} $</div>
+                    `;
+                } else if (type === 'premium') {
+                    summaryHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Тип:</strong> Telegram Premium</div>
+                        <div style="margin-bottom: 8px;"><strong>Получатель:</strong> ${data.username}</div>
+                        <div style="margin-bottom: 8px;"><strong>Срок:</strong> ${data.months}</div>
+                        <div style="margin-bottom: 8px;"><strong>Стоимость:</strong> ${data.price} $</div>
+                    `;
+                }
+                
+                modalSummary.innerHTML = summaryHTML;
+                modal.style.display = 'flex';
+                
+                document.querySelectorAll('.method-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const method = this.dataset.method;
+                        processPayment(method, type, data);
+                    });
+                });
+            }
+
+            function processPayment(method, type, data) {
+                alert(`Начинается оплата через ${method === 'cryptobot' ? 'CryptoBot' : 'банковскую карту'}`);
+                
+                setTimeout(() => {
+                    alert('Платеж успешно завершен! Заказ обрабатывается.');
+                    document.getElementById('paymentModal').style.display = 'none';
+                    showSection('orders');
+                }, 1500);
+            }
+
+            function createStarsDepositInvoice(stars, usdtAmount) {
+                // Здесь должна быть интеграция с CryptoBot API
+                alert(`Создается инвойс на пополнение ${stars} ⭐ (${usdtAmount} USDT) через CryptoBot...`);
+                
+                // В реальном приложении здесь должен быть запрос к бэкенду
+                setTimeout(() => {
+                    alert('Инвойс создан! Проверьте CryptoBot для оплаты.');
+                    document.getElementById('depositModal').style.display = 'none';
+                }, 1000);
+            }
+
+            function submitStarsWithdrawRequest(username, stars) {
+                // Здесь должна быть интеграция с бэкендом для вывода звезд
+                alert(`Заявка на вывод ${stars} ⭐ на аккаунт ${username} отправлена.`);
+                
+                // В реальном приложении здесь должен быть запрос к бэкенду
+                setTimeout(() => {
+                    alert('Заявка принята! Звезды будут отправлены в течение 5 минут.');
+                    document.getElementById('withdrawModal').style.display = 'none';
+                }, 1000);
+            }
+
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ru-RU', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                document.getElementById('updateTime').textContent = timeString;
+            }
+            
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>
